@@ -31,7 +31,7 @@ const OPT = { //网站配置
   "recentlyType" : 1,//最近文章类型：1-按创建时间倒序（按id倒序），2-按修改时间排序
   "readMoreLength":150,//阅读更多截取长度
   "cacheTime" : 60*60*24*2, //文章在浏览器的缓存时长(秒),建议=文章更新频率
-  "html404" : `<b>404</b>`,//404页面代码
+  "html404" : `<!DOCTYPE html><html><head><title>404 Not Found</title></head><body><center><h1>404 Not Found.</h1></center><hr><center>nginx</center></body></html>`,//404页面代码
   "codeBeforHead":`
   <script src="https://cdn.staticfile.org/jquery/2.2.4/jquery.min.js"></script>
   `,//其他代码,显示在</head>前
@@ -239,7 +239,7 @@ async function handlerRequest(event){
         headers:{
           "content-type":"text/html;charset=UTF-8"
         },
-        status:200
+        status:404
       })
       break;
   }  
@@ -392,12 +392,6 @@ async function renderBlog(url){
   if(pageSize){
     OPT.pageSize=parseInt(pageSize);
   }
-  //如果采用默认default主题，则改为加载default2.0主题
-  if(OPT.theme_github_path+"default/"==OPT.themeURL){
-    OPT.themeURL=OPT.theme_github_path+"default2.0/";
-  }
-  console.log("theme pageSize",OPT.pageSize,OPT.themeURL)
-  
   //获取主页模板源码
   let theme_html=await getThemeHtml("index"),
       //KV中读取导航栏、分类目录、标签、链接、所有文章、近期文章等配置信息
