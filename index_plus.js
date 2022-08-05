@@ -32,24 +32,11 @@ const OPT = { //网站配置
   "readMoreLength":150,//阅读更多截取长度
   "cacheTime" : 60*60*24*2, //文章在浏览器的缓存时长(秒),建议=文章更新频率
   "html404" : `<b>404</b>`,//404页面代码
-  "codeBeforHead":`
-  <script src="https://cdn.staticfile.org/jquery/2.2.4/jquery.min.js"></script>
-  `,//其他代码,显示在</head>前
-  "codeBeforBody":`
-  `,//其他代码,显示在</body>前
-  "commentCode":`
-  <script>
-    //文章浏览页 添加编辑直达功能
-    $(".entry-info").append('<a style="float:right;margin-left:5px;" href="'+location.href.replace('/article/','/admin/edit/')+'" target="_blank">编辑</a>')
-  </script>
-  `,//评论区代码
-  "widgetOther":`
-  `,//20201224新增参数,用于右侧 小部件扩展
+  "codeBeforHead":``,//其他代码,显示在</head>前
+  "codeBeforBody":``,//其他代码,显示在</body>前
+  "commentCode":`<script>$(".entry-info").append('<a style="float:right;margin-left:5px;" href="'+location.href.replace('/article/','/admin/edit/')+'" target="_blank">编辑</a>')</script>`,//评论区代码//文章浏览页 添加编辑直达功能
+  "widgetOther":``,//20201224新增参数,用于右侧 小部件扩展
   "otherCodeA":`热度`,//模板开发用的其他自定义变量
-  "otherCodeB":``,//
-  "otherCodeC":``,//
-  "otherCodeD":``,//
-  "otherCodeE":``,//
   "copyRight" :`Powered by <a href="https://www.cloudflare.com">Cloudflare</a> & <a href="https://blog.arrontg.cf">CFBlog-Plus</a> & <a href="https://blog.gezhong.vip">CF-Blog </a>`,//自定义版权信息,建议保留大公无私的 Coudflare 和 作者 的链接
   "robots":`User-agent: *
 Disallow: /admin`,//robots.txt设置
@@ -143,6 +130,8 @@ Disallow: /admin`,//robots.txt设置
 
     //默认图片，工具：https://tool.lu/imageholder/
     if($('#img').val()=="")$('#img').val('https://cdn.jsdelivr.net/gh/Arronlong/cdn@master/cfblog/cfblog-plus.png');
+    //默认永久链接设置为index
+    if($('#link').val()=="")$('#link').val('index');
     //默认时间设置为当前时间
     if($('#createDate').val()=="")$('#createDate').val(new Date(new Date().getTime()+8*60*60*1000).toJSON().substr(0,16));
     `, //后台编辑页面脚本
@@ -239,7 +228,7 @@ async function handlerRequest(event){
         headers:{
           "content-type":"text/html;charset=UTF-8"
         },
-        status:200
+        status:404
       })
       break;
   }  
@@ -763,6 +752,7 @@ async function handle_admin(request){
     
     //校验参数完整性
     if(title.length>0
+      && link.length>0
       && createDate.length>0
       && category.length>0
       && contentMD.length>0
@@ -864,6 +854,7 @@ async function handle_admin(request){
         
     //校验参数完整性
     if(title.length>0
+      && link.length>0
       && createDate.length>0
       && category.length>0
       && contentMD.length>0
