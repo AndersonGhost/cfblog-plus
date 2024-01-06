@@ -984,12 +984,13 @@ function parseBasicAuth(request){
 //获取所有【公开】文章：仅前台使用
 async function getArticlesList(){
   let articles_all = await getAllArticlesList();
+  let articles_show = JSON.parse('[]');
   
   for(var i=0;i<articles_all.length;i++)
-    if(articles_all[i].hidden){
-        articles_all.splice(i,1);
-    }
-  return articles_all;
+    if(!(articles_all[i].hidden)){
+      articles_show.push(articles_all[i]);
+    };
+  return articles_show;
 }
 
 //文章排序：先按id倒排，再按置顶时间倒排
