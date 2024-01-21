@@ -225,7 +225,7 @@ async function handlerRequest(event){
       k = await handle_admin(request);
       break;
     case "article": //文章内容页
-      k = await handle_article(paths[1]);
+      k = await handle_article(paths);
       break;
     case "": //文章 首页
     case "page": //文章 分页
@@ -239,7 +239,7 @@ async function handlerRequest(event){
         headers:{
           "content-type":"text/html;charset=UTF-8"
         },
-        status:200
+        status:404
       })
       break;
   }  
@@ -498,7 +498,8 @@ async function renderBlog(url){
 }
 
 //渲染前端博客的文章内容页
-async function handle_article(id){
+async function handle_article(paths){
+  let id = paths[1];
   //获取内容页模板源码
   let theme_html=await getThemeHtml("article"),
       //KV中读取导航栏、分类目录、标签、链接、近期文章等配置信息
@@ -516,6 +517,17 @@ async function handle_article(id){
   
   //获取本篇文章
   let article=articles_sibling[1];
+
+  // 当文章为隐藏时id后面的文章永久地址不匹配直接404
+  if (article.hidden) {
+      if (!(paths[2] && paths[2] === article.link))
+        return new Response(OPT.html404,{
+        headers:{
+          "content-type":"text/html;charset=UTF-8"
+        },
+        status:404
+      });
+  }
 
   //组装文章详情页各参数
   let title=article.title.replace(nullToEmpty(OPT.top_flag),'').replace(nullToEmpty(OPT.hidden_flag),'')+" - "+OPT.siteName, 
